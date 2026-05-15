@@ -116,7 +116,8 @@
     scale: 'week', laneFilter: 'all', adminMode: false, seedVersion: 1,
     activeTab: 'gantt',
     planStatus: {},   // { 'nandu|input-goals': { status: 'done', note: '' }, ... }
-    tpmStatus: {}     // { 'omar|dep-dashboard': { status: 'done', note: '' }, ... }
+    tpmStatus: {},    // { 'omar|dep-dashboard': { status: 'done', note: '' }, ... }
+    backendUrl: ''    // Apps Script web app URL, loaded from seed.json
   };
 
   var adminModalDraft = null;
@@ -250,6 +251,49 @@
 
   function saveTpmStatus() {
     localStorage.setItem(TPM_STATUS_KEY, JSON.stringify(state.tpmStatus));
+  }
+
+  // ── Backend sync (Apps Script) ───────────────────────────────────────────
+  // Fetches latest status from the Sheet and merges it over localStorage.
+  // Sheet data wins — it's the source of truth.
+  function loadFromBackend() {
+    var url = state.backendUrl;
+    if (!url) return;
+    fetch(url)
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || data.error) return;
+        if (data.planStatus && typeof data.planStatus === 'object') {
+          Object.assign(state.planStatus, data.planStatus);
+          savePlanStatus();
+        }
+        if (data.tpmStatus && typeof data.tpmStatus === 'object') {
+          Object.assign(state.tpmStatus, data.tpmStatus);
+          saveTpmStatus();
+        }
+        if (state.activeTab === 'status') renderStatusGrid();
+        if (state.activeTab === 'tpm') renderTpmGrid();
+      })
+      .catch(function () { /* backend unavailable — localStorage values stand */ });
+  }
+
+  // Fire-and-forget POST for a single cell update.
+  // localStorage is already written before this is called, so the UI is instant.
+  function syncCellToBackend(grid, rowKey, colKey, status, note) {
+    var url = state.backendUrl;
+    if (!url) return;
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grid: grid,
+        rowKey: rowKey,
+        colKey: colKey,
+        status: status,
+        note: note,
+        updatedBy: state.viewer.displayName || 'unknown'
+      })
+    }).catch(function () { /* silent — cell is already saved in localStorage */ });
   }
 
   function getCellStatus(leaderKey, deliverableKey) {
@@ -431,14 +475,17 @@
     var chosen = document.querySelector('input[name="cell-status"]:checked');
     if (!chosen) return;
     var k = statusKey(cellEditTarget.rowKey, cellEditTarget.colKey);
+    var noteVal = $('cell-note').value.trim();
     if (cellEditTarget.gridType === 'tpm') {
-      state.tpmStatus[k] = { status: chosen.value, note: $('cell-note').value.trim() };
+      state.tpmStatus[k] = { status: chosen.value, note: noteVal };
       saveTpmStatus();
+      syncCellToBackend('tpm', cellEditTarget.rowKey, cellEditTarget.colKey, chosen.value, noteVal);
       closeModal('cell-modal');
       renderTpmGrid();
     } else {
-      state.planStatus[k] = { status: chosen.value, note: $('cell-note').value.trim() };
+      state.planStatus[k] = { status: chosen.value, note: noteVal };
       savePlanStatus();
+      syncCellToBackend('plan', cellEditTarget.rowKey, cellEditTarget.colKey, chosen.value, noteVal);
       closeModal('cell-modal');
       renderStatusGrid();
     }
@@ -497,6 +544,7 @@
     state.admins = seed.admins || [];
     state.announcements = seed.announcements || [];
     state.milestones = seed.milestones || [];
+    if (seed.backendUrl) state.backendUrl = seed.backendUrl;
   }
 
   function loadLocal() {
@@ -1148,6 +1196,7 @@
     $('btn-admin-mode').textContent = state.adminMode ? 'Edit mode: On' : 'Edit mode: Off';
     wireEvents();
     renderChrome();
+    loadFromBackend(); // pull latest Sheet data; merges over localStorage silently
   }
 
   init();

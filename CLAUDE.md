@@ -20,9 +20,53 @@ Static GitHub Pages app for the Business Platform PD planning cycle. Gantt timel
 
 ---
 
-## How to deploy
+## Database — Google Sheet backend
 
-Every change goes live in two steps:
+Status cell edits (PD Leaders + TPM tabs) are saved to **two places simultaneously**:
+1. **localStorage** — instant, browser-local cache (survives refresh, not browser clear)
+2. **Google Sheet** via Apps Script — shared source of truth, persists for everyone
+
+### One-time setup (do this once to activate the backend)
+
+**Step 1 — Create the Sheet:**
+Go to Google Sheets, create a new spreadsheet named `BP PD Planning Cortex`.
+Copy the Sheet ID from the URL.
+
+**Step 2 — Add the Apps Script:**
+In the Sheet: Extensions → Apps Script.
+Copy-paste the contents of `cortex-backend.gs` into the editor. Save.
+
+**Step 3 — Deploy as web app:**
+Deploy → New deployment → Type: Web app
+- Execute as: **Me**
+- Who has access: **Anyone at Intuit** (or "Anyone" if needed for GitHub Pages)
+
+Copy the web app URL (looks like `https://script.google.com/macros/s/.../exec`).
+
+**Step 4 — Wire the URL:**
+Paste it into `data/seed.json` → `"backendUrl"`:
+```json
+"backendUrl": "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec"
+```
+Commit and push. The app will now read + write to the Sheet on every load and cell save.
+
+**Step 5 — Verify:**
+Open the app, turn on Edit mode, click any cell, set it to Done.
+Check the Sheet — a row should appear in `PlanStatus` within a second.
+
+### How it works at runtime
+- **On page load:** App fetches all rows from the Sheet and merges them over localStorage. Sheet wins.
+- **On cell save:** localStorage is written instantly (UI is immediate). A background POST fires to the Sheet — no spinner, no blocking.
+- **If backend is unreachable:** Falls back silently to localStorage. No error shown.
+
+### Redeploy after changing cortex-backend.gs
+Any change to `cortex-backend.gs` requires a new Apps Script deployment:
+Deploy → Manage deployments → Edit → New version → Deploy.
+The URL stays the same.
+
+---
+
+## How to deploy (GitHub Pages)
 ```bash
 git add -A
 git commit -m "your message"
