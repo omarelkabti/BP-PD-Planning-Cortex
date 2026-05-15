@@ -25,12 +25,24 @@
     </div>
   </div>
 
+  <!-- Countdown / deadline urgency strip -->
+  <div class="deadline-strip" id="deadline-strip"></div>
+
   <div class="announcements">
     <div class="ann-label">📢 KEY UPDATES</div>
     <div class="ann-items" id="announcement-list"></div>
   </div>
 
-  <div class="main">
+  <!-- Planning phase context bar -->
+  <div class="phase-bar" id="phase-bar"></div>
+
+  <!-- Tab nav -->
+  <div class="tab-nav">
+    <button type="button" class="tab-btn active" data-tab="gantt">📅 Timeline</button>
+    <button type="button" class="tab-btn" data-tab="status">✅ Planning Status</button>
+  </div>
+
+  <div class="main" id="tab-gantt">
     <aside class="sidebar">
       <div>
         <div class="sidebar-section-title">📎 Key Artifacts</div>
@@ -67,9 +79,10 @@
             <button type="button" class="scale-btn" data-lane="financial">Financial</button>
           </div>
         </div>
+        <button type="button" class="btn-today" id="btn-today">⟳ Today</button>
       </div>
 
-      <div class="gantt-wrap">
+      <div class="gantt-wrap" id="gantt-wrap">
         <table class="gantt-table">
           <thead class="gantt-header">
             <tr id="gantt-header-row"></tr>
@@ -77,6 +90,27 @@
           <tbody id="gantt-body"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- Planning Status tab -->
+  <div class="status-panel hidden" id="tab-status">
+    <div class="status-header-bar">
+      <div class="status-header-left">
+        <div class="status-title">FY27 Planning Status</div>
+        <div class="status-subtitle">Track deliverable submission by PD Leader · editable in Edit mode</div>
+      </div>
+      <div class="status-header-right">
+        <div class="status-legend">
+          <span class="legend-dot done"></span>Done
+          <span class="legend-dot at-risk"></span>At Risk
+          <span class="legend-dot pending-s"></span>Pending
+          <span class="legend-dot na"></span>N/A
+        </div>
+      </div>
+    </div>
+    <div class="status-grid-wrap">
+      <div id="status-grid"></div>
     </div>
   </div>
 
@@ -224,6 +258,36 @@
         <span class="flex-spacer"></span>
         <button type="button" class="btn-secondary" id="milestone-cancel">Cancel</button>
         <button type="button" class="btn-primary" id="milestone-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cell edit modal for planning status -->
+  <div class="modal-root hidden" id="cell-modal" aria-hidden="true">
+    <div class="modal-panel modal-panel-sm">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="cell-modal-title">Update Status</div>
+          <div class="modal-subtitle" id="cell-modal-subtitle"></div>
+        </div>
+        <button type="button" class="modal-close" id="cell-modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-label">Status</div>
+        <div class="status-options" id="cell-status-options">
+          <label class="status-opt"><input type="radio" name="cell-status" value="pending"> <span class="status-pill s-pending">Pending</span></label>
+          <label class="status-opt"><input type="radio" name="cell-status" value="done"> <span class="status-pill s-done">Done ✓</span></label>
+          <label class="status-opt"><input type="radio" name="cell-status" value="at-risk"> <span class="status-pill s-at-risk">At Risk ⚠</span></label>
+          <label class="status-opt"><input type="radio" name="cell-status" value="na"> <span class="status-pill s-na">N/A</span></label>
+        </div>
+        <div class="form-field" style="margin-top:12px">
+          <label for="cell-note">Note (optional)</label>
+          <textarea id="cell-note" rows="2" placeholder="e.g. Submitted to SharePoint, waiting on Eran review"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="cell-modal-cancel">Cancel</button>
+        <button type="button" class="btn-primary" id="cell-modal-save">Save</button>
       </div>
     </div>
   </div>

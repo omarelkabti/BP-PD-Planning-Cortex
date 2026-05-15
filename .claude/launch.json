@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cortex",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8181", "."],
+      "port": 8181
+    }
+  ]
+}
