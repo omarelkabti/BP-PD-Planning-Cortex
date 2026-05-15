@@ -1,0 +1,291 @@
+{
+  "viewer": { "displayName": "Omar" },
+  "links": {
+    "dependencyDashboard": "",
+    "workstreamReconciliation": "",
+    "capabilityRoadmap": "",
+    "sbgPortfolioRoadmap": "",
+    "fy27InputGoals": "",
+    "bpPdDriveFolder": "",
+    "sbgPlanningCortex": "https://intuitcorp.quickbase.com/db/bvmumchzn?a=dbpage&pagename=planning-navigator.html",
+    "petResourceTracker": "",
+    "smartsheetBpPd": ""
+  },
+  "admins": [
+    { "name": "Judy Nannini", "email": "judy_nannini@intuit.com", "role": "VP BP PD" },
+    { "name": "Eran Lador", "email": "eran_lador@intuit.com", "role": "PD Leader" },
+    { "name": "Omar Elkabti", "email": "omar_elkabti@intuit.com", "role": "TPM Lead" },
+    { "name": "Roberta Chen", "email": "roberta_chen@intuit.com", "role": "TPM Lead" },
+    { "name": "Allison Bellah", "email": "allison_bellah@intuit.com", "role": "PD Leader" }
+  ],
+  "announcements": [
+    {
+      "id": "ann-1",
+      "text": "May 20 — Preliminary Workstream Resourcing Status due. All TPMs must confirm resource allocations in PET before EOD.",
+      "postedBy": "Planning Cortex",
+      "postedDate": "2026-05-01",
+      "expiryDate": "",
+      "isActive": true
+    },
+    {
+      "id": "ann-2",
+      "text": "May 22 — CTO Staff Cutline. Submit all materials via the Dependency Dashboard by 5pm PT.",
+      "postedBy": "Planning Cortex",
+      "postedDate": "2026-05-01",
+      "expiryDate": "",
+      "isActive": true
+    },
+    {
+      "id": "ann-3",
+      "text": "May 21 — Tech Pass 4 IG submission deadline. Coordinate with your PD leads on final goal language.",
+      "postedBy": "Planning Cortex",
+      "postedDate": "2026-05-01",
+      "expiryDate": "",
+      "isActive": true
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms-central-1",
+      "title": "CEO Staff IG Review",
+      "lane": "central",
+      "startDate": "2026-05-11",
+      "endDate": "2026-05-11",
+      "color": "red",
+      "shape": "dot",
+      "displayLabel": "5/11 ✓",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-2",
+      "title": "Tech Pass 4 IG Submission",
+      "lane": "central",
+      "startDate": "2026-05-21",
+      "endDate": "2026-05-21",
+      "color": "orange",
+      "shape": "dot",
+      "displayLabel": "5/21",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-3",
+      "title": "Pass 4 Input Goals Due",
+      "lane": "central",
+      "startDate": "2026-05-26",
+      "endDate": "2026-05-26",
+      "color": "orange",
+      "shape": "dot",
+      "displayLabel": "5/26",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-4",
+      "title": "Segment & Ecosystem Narratives",
+      "lane": "central",
+      "startDate": "2026-06-02",
+      "endDate": "2026-06-02",
+      "color": "blue",
+      "shape": "dot",
+      "displayLabel": "6/2",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-5",
+      "title": "Final Pass IGs & Outcome Metrics",
+      "lane": "central",
+      "startDate": "2026-06-22",
+      "endDate": "2026-06-22",
+      "color": "red",
+      "shape": "dot",
+      "displayLabel": "6/22",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-6",
+      "title": "Plan Lock",
+      "lane": "central",
+      "startDate": "2026-06-22",
+      "endDate": "2026-06-22",
+      "color": "red",
+      "shape": "square",
+      "displayLabel": "6/22 🔒",
+      "isActive": true
+    },
+    {
+      "id": "ms-central-7",
+      "title": "July Board Meeting",
+      "lane": "central",
+      "startDate": "2026-07-22",
+      "endDate": "2026-07-23",
+      "color": "gray",
+      "shape": "bar",
+      "displayLabel": "Board Meeting 7/22–23",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-1",
+      "title": "Prelim. Resourcing Status",
+      "lane": "bpd",
+      "startDate": "2026-05-20",
+      "endDate": "2026-05-20",
+      "color": "orange",
+      "shape": "dot",
+      "displayLabel": "5/20 ⚡",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-2",
+      "title": "Materials → CTO Cutline",
+      "lane": "bpd",
+      "startDate": "2026-05-20",
+      "endDate": "2026-05-20",
+      "color": "red",
+      "shape": "dot",
+      "displayLabel": "5/20 Deadline ⚡",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-3",
+      "title": "CTO Staff Cutline",
+      "lane": "bpd",
+      "startDate": "2026-05-22",
+      "endDate": "2026-05-22",
+      "color": "red",
+      "shape": "square",
+      "displayLabel": "5/22 🔴 CUTLINE",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-4",
+      "title": "Final Resourcing Status",
+      "lane": "bpd",
+      "startDate": "2026-05-26",
+      "endDate": "2026-05-26",
+      "color": "green",
+      "shape": "dot",
+      "displayLabel": "5/26",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-5",
+      "title": "Final Dependency Response",
+      "lane": "bpd",
+      "startDate": "2026-05-26",
+      "endDate": "2026-05-26",
+      "color": "green",
+      "shape": "dot",
+      "displayLabel": "5/26",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-6",
+      "title": "Roadmaps & Deps True-up",
+      "lane": "bpd",
+      "startDate": "2026-05-27",
+      "endDate": "2026-05-27",
+      "color": "teal",
+      "shape": "bar",
+      "displayLabel": "True-up Window 5/27",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-7",
+      "title": "3&1-Year Plan Materials Due",
+      "lane": "bpd",
+      "startDate": "2026-06-02",
+      "endDate": "2026-06-02",
+      "color": "blue",
+      "shape": "dot",
+      "displayLabel": "6/2",
+      "isActive": true
+    },
+    {
+      "id": "ms-bpd-8",
+      "title": "FY27 Resource Baseline in PET",
+      "lane": "bpd",
+      "startDate": "2026-06-08",
+      "endDate": "2026-07-03",
+      "color": "purple",
+      "shape": "bar",
+      "displayLabel": "PET Baseline 6/8–7/3",
+      "isActive": true
+    },
+    {
+      "id": "ms-op-1",
+      "title": "BP PD Leadership Sync",
+      "lane": "opmech",
+      "startDate": "2026-04-24",
+      "endDate": "2026-07-16",
+      "color": "blue",
+      "shape": "bar",
+      "displayLabel": "Weekly leadership sync",
+      "isActive": true
+    },
+    {
+      "id": "ms-op-2",
+      "title": "3&1-Yr Plan SVP+ Review",
+      "lane": "opmech",
+      "startDate": "2026-05-28",
+      "endDate": "2026-05-29",
+      "color": "pink",
+      "shape": "bar",
+      "displayLabel": "SVP+ Review 5/28–29",
+      "isActive": true
+    },
+    {
+      "id": "ms-op-3",
+      "title": "July Board Meeting Prep",
+      "lane": "opmech",
+      "startDate": "2026-06-11",
+      "endDate": "2026-06-12",
+      "color": "gray",
+      "shape": "bar",
+      "displayLabel": "Board Prep 6/11–12",
+      "isActive": true
+    },
+    {
+      "id": "ms-fin-1",
+      "title": "Financial Pass 2",
+      "lane": "financial",
+      "startDate": "2026-05-26",
+      "endDate": "2026-05-26",
+      "color": "green",
+      "shape": "dot",
+      "displayLabel": "5/26",
+      "isActive": true
+    },
+    {
+      "id": "ms-fin-2",
+      "title": "FOR Materials Due",
+      "lane": "financial",
+      "startDate": "2026-06-02",
+      "endDate": "2026-06-02",
+      "color": "blue",
+      "shape": "dot",
+      "displayLabel": "6/2",
+      "isActive": true
+    },
+    {
+      "id": "ms-fin-3",
+      "title": "Financial Pass 3",
+      "lane": "financial",
+      "startDate": "2026-07-13",
+      "endDate": "2026-07-13",
+      "color": "yellow",
+      "shape": "dot",
+      "displayLabel": "7/13",
+      "isActive": true
+    },
+    {
+      "id": "ms-fin-4",
+      "title": "July Board Materials Due",
+      "lane": "financial",
+      "startDate": "2026-07-13",
+      "endDate": "2026-07-13",
+      "color": "red",
+      "shape": "dot",
+      "displayLabel": "7/13",
+      "isActive": true
+    }
+  ]
+}

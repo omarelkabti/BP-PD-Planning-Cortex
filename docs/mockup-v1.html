@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<!--
+  Superseded by the GitHub Pages app at repo root: index.html + cortex.css + cortex.js + data/seed.json
+  Kept for visual reference only.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BP PD Planning Cortex — Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6fb; color: #1a2340; font-size: 13px; }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: #1e2d6b;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 48px;
+    gap: 12px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; white-space: nowrap; }
+  .topbar-logo span { color: #7ec8e3; }
+  .topbar-date { font-size: 11px; color: #a0b0d0; }
+  .topbar-welcome { font-size: 11px; color: #c8d8f0; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #e67e22; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .admin-badge { background: #27ae60; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  .btn-sm { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+  .btn-sm:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── Announcements banner ── */
+  .announcements {
+    background: #fff8e1;
+    border-bottom: 1px solid #ffe082;
+    padding: 8px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .ann-label { background: #f39c12; color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; margin-top: 1px; }
+  .ann-items { display: flex; flex-direction: column; gap: 3px; }
+  .ann-item { font-size: 12px; color: #5a4000; }
+  .ann-item strong { color: #c0392b; }
+
+  /* ── Main layout ── */
+  .main { display: flex; gap: 0; height: calc(100vh - 110px); }
+
+  /* ── Artifacts sidebar ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: white;
+    border-right: 1px solid #dde3f0;
+    padding: 14px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sidebar-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #8896b0; margin-bottom: 6px; }
+  .artifact-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 8px; border-radius: 6px; text-decoration: none;
+    color: #1a2340; font-size: 12px; font-weight: 500;
+    border: 1px solid #e8edf5; background: #f8faff;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .artifact-link:hover { background: #e8f0ff; border-color: #b0c0e8; }
+  .artifact-link .icon { font-size: 14px; width: 20px; text-align: center; }
+  .artifact-link .label { line-height: 1.3; }
+  .artifact-link .sublabel { font-size: 10px; color: #8896b0; font-weight: 400; }
+
+  /* ── Gantt area ── */
+  .gantt-area { flex: 1; overflow: auto; background: #f4f6fb; }
+
+  /* Controls bar */
+  .controls {
+    background: white;
+    border-bottom: 1px solid #dde3f0;
+    padding: 8px 16px;
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .controls-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .scale-btn { border: 1px solid #dde3f0; background: #f4f6fb; color: #4a5568; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; }
+  .scale-btn.active { background: #1e2d6b; color: white; border-color: #1e2d6b; }
+  .controls-right { display: flex; gap: 6px; }
+
+  /* Gantt table */
+  .gantt-wrap { padding: 0; }
+  .gantt-table { width: 100%; border-collapse: collapse; }
+
+  /* Header row — week labels */
+  .gantt-header { background: white; position: sticky; top: 44px; z-index: 9; }
+  .gantt-header th { border-bottom: 2px solid #dde3f0; border-right: 1px solid #eef0f5; padding: 6px 4px; text-align: center; font-size: 10px; font-weight: 600; color: #6b7a99; white-space: nowrap; min-width: 70px; }
+  .gantt-header th.lane-label-th { width: 160px; min-width: 160px; text-align: left; padding-left: 10px; color: #8896b0; font-size: 10px; background: white; }
+  .today-col { background: #fff8e1 !important; border-left: 2px solid #f39c12 !important; }
+
+  /* Lane rows */
+  .lane-header td {
+    background: #1e2d6b;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 7px 10px;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #2a3a7b;
+  }
+  .lane-header td.col { background: #1e2d6b; border-right: 1px solid #2a3a7b; }
+  .milestone-row td { background: white; border-bottom: 1px solid #f0f2f8; padding: 0; height: 34px; }
+  .milestone-row td.label-cell { padding: 0 8px 0 16px; font-size: 11px; color: #2c3a5a; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+  .milestone-row td.col { border-right: 1px solid #f0f2f8; position: relative; }
+  .milestone-row td.today-col { background: #fffdf0; }
+  .milestone-row:hover td { background: #f8faff; }
+  .milestone-row:hover td.today-col { background: #fff8dc; }
+
+  /* Bar rendering */
+  .bar-wrap { position: relative; height: 34px; }
+  .gantt-bar {
+    position: absolute;
+    top: 8px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex; align-items: center;
+    padding: 0 6px;
+    font-size: 10px; font-weight: 600; color: white;
+    white-space: nowrap; overflow: hidden;
+    cursor: default;
+  }
+  .gantt-dot {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    cursor: default;
+  }
+  .gantt-label-float {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px; font-weight: 600;
+    white-space: nowrap;
+    color: #2c3a5a;
+    pointer-events: none;
+  }
+
+  /* Colors */
+  .c-blue   { background: #2563eb; }
+  .c-teal   { background: #0891b2; }
+  .c-green  { background: #16a34a; }
+  .c-orange { background: #ea580c; }
+  .c-purple { background: #7c3aed; }
+  .c-red    { background: #dc2626; }
+  .c-gray   { background: #64748b; }
+  .c-yellow { background: #d97706; }
+  .c-pink   { background: #db2777; }
+  .d-blue   { background: #2563eb; }
+  .d-teal   { background: #0891b2; }
+  .d-green  { background: #16a34a; }
+  .d-orange { background: #ea580c; }
+  .d-red    { background: #dc2626; }
+  .d-gray   { background: #64748b; }
+  .d-yellow { background: #d97706; }
+
+  /* Today marker */
+  .today-marker { position: relative; }
+  .today-marker::after {
+    content: 'TODAY';
+    position: absolute; top: -2px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px; font-weight: 800; color: #f39c12;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Business Platform PD <span>Planning Cortex</span></div>
+    <div class="topbar-date">Wed, May 13, 2026</div>
+    <div class="topbar-welcome">•&nbsp;&nbsp;Welcome back, Omar! <span style="color:#7ec8e3">Admin access granted.</span> Toggle admin mode using ⚙️</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sm" onclick="openAdminModal()">⚙️ Admin</button>
+    <button class="btn-sm">📢 Announce</button>
+    <button class="btn-sm">＋ Milestone</button>
+    <button class="btn-sm">⬇ Export CSV</button>
+    <div class="avatar">OE</div>
+    <div class="admin-badge">ADMIN</div>
+  </div>
+</div>
+
+<!-- Announcements -->
+<div class="announcements">
+  <div class="ann-label">📢 KEY UPDATES</div>
+  <div class="ann-items">
+    <div class="ann-item"><strong>⚡ May 20</strong> — Preliminary Workstream Resourcing Status due. All TPMs must confirm resource allocations in PET before EOD.</div>
+    <div class="ann-item"><strong>🔴 May 22</strong> — CTO Staff Cutline. Submit all materials via the Dependency Dashboard by 5pm PT.</div>
+    <div class="ann-item"><strong>📋 May 21</strong> — Tech Pass 4 IG submission deadline. Coordinate with your PD leads on final goal language.</div>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main">
+
+  <!-- Artifacts sidebar -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-section-title">📎 Key Artifacts</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="artifact-link">
+          <span class="icon">📊</span>
+          <div class="label">Dependency Dashboard<div class="sublabel">Live IB/OB tracker</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">🔄</span>
+          <div class="label">Workstream Reconciliation<div class="sublabel">Cap ↔ SBG × Input Goals</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">🗺</span>
+          <div class="label">6Q Capability Roadmap<div class="sublabel">Business Platform PD</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">📋</span>
+          <div class="label">SBG Portfolio Roadmap<div class="sublabel">Product Work Roadmap</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">🎯</span>
+          <div class="label">FY27 Input Goals<div class="sublabel">GBSG Pass 3 (latest)</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">📁</span>
+          <div class="label">BP PD Drive Folder<div class="sublabel">Planning docs & decks</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-title">🔗 Quick Links</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="artifact-link">
+          <span class="icon">⚡</span>
+          <div class="label">SBG Planning Cortex<div class="sublabel">Central calendar</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">📊</span>
+          <div class="label">PET / Resource Tracker<div class="sublabel">Headcount & allocation</div></div>
+        </div>
+        <div class="artifact-link">
+          <span class="icon">🏗</span>
+          <div class="label">Smartsheet: BP PD<div class="sublabel">Workstreams & deps</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>👥 Admins / Editors</span>
+        <button onclick="openAdminModal()" style="background:none;border:1px solid #dde3f0;border-radius:4px;font-size:10px;color:#4a5568;padding:2px 7px;cursor:pointer;font-weight:600">+ Manage</button>
+      </div>
+      <div id="admin-list" style="display:flex;flex-direction:column;gap:4px;margin-top:4px"></div>
+    </div>
+  </div>
+
+  <!-- Gantt -->
+  <div class="gantt-area">
+    <div class="controls">
+      <div class="controls-left">
+        <span style="font-size:11px;color:#6b7a99;font-weight:600">VIEW:</span>
+        <button class="scale-btn">Day</button>
+        <button class="scale-btn active">Week</button>
+        <button class="scale-btn">Month</button>
+        <span style="margin-left:8px;font-size:11px;color:#6b7a99;font-weight:600">LANES:</span>
+        <button class="scale-btn active">All</button>
+        <button class="scale-btn">Central</button>
+        <button class="scale-btn">BP PD</button>
+        <button class="scale-btn">Op Mechs</button>
+      </div>
+    </div>
+
+    <div class="gantt-wrap">
+      <table class="gantt-table">
+        <thead class="gantt-header">
+          <tr>
+            <th class="lane-label-th">PHASE / MILESTONE</th>
+            <th>Apr 24–30</th>
+            <th>May 1–7</th>
+            <th class="today-col today-marker">May 8–14</th>
+            <th>May 15–21</th>
+            <th>May 22–28</th>
+            <th>May 29–Jun 4</th>
+            <th>Jun 5–11</th>
+            <th>Jun 12–18</th>
+            <th>Jun 19–25</th>
+            <th>Jun 26–Jul 2</th>
+            <th>Jul 3–9</th>
+            <th>Jul 10–16</th>
+            <th>Jul 17–23</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- ── LANE 1: Central Planning Calendar ── -->
+          <tr class="lane-header">
+            <td colspan="14">🏛 Central Planning Calendar</td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">CEO Staff IG Review</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-red" style="left:60%;"></div>
+                <span class="gantt-label-float" style="left:calc(60% + 12px)">5/11 ✓</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Tech Pass 4 IG Submission</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-orange" style="left:72%"></div>
+                <span class="gantt-label-float" style="left:calc(72% + 12px)">5/21</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Pass 4 Input Goals Due</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-orange" style="left:14%"></div>
+                <span class="gantt-label-float" style="left:calc(14% + 12px)">5/26</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Segment & Ecosystem Narratives</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-blue" style="left:14%"></div>
+                <span class="gantt-label-float" style="left:calc(14% + 12px)">6/2</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Final Pass IGs & Outcome Metrics</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-red" style="left:50%"></div>
+                <span class="gantt-label-float" style="left:calc(50% + 12px)">6/22</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Plan Lock</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-red" style="left:85%;width:12px;height:12px;top:calc(50% - 6px);border-radius:3px"></div>
+                <span class="gantt-label-float" style="left:calc(85% + 14px);font-weight:800;color:#dc2626">6/22 🔒</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">July Board Meeting</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-gray" style="left:10%;width:75%">Board Meeting 7/22–23</div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── LANE 2: BP PD Internal Deliverables ── -->
+          <tr class="lane-header">
+            <td colspan="14">📋 BP PD Internal Deliverables</td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Prelim. Resourcing Status</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-orange" style="left:14%"></div>
+                <span class="gantt-label-float" style="left:calc(14% + 12px);color:#ea580c;font-weight:700">5/20 ⚡</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Materials → CTO Cutline</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-red" style="left:28%"></div>
+                <span class="gantt-label-float" style="left:calc(28% + 12px);color:#dc2626;font-weight:700">5/20 Deadline ⚡</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">CTO Staff Cutline</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot" style="left:0%;background:#dc2626;width:12px;height:12px;top:calc(50% - 6px);border-radius:2px"></div>
+                <span class="gantt-label-float" style="left:14px;color:#dc2626;font-weight:800">5/22 🔴 CUTLINE</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Final Resourcing Status</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-green" style="left:28%"></div>
+                <span class="gantt-label-float" style="left:calc(28% + 12px)">5/26</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Final Dependency Response</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-green" style="left:28%"></div>
+                <span class="gantt-label-float" style="left:calc(28% + 12px)">5/26</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Roadmaps & Deps True-up</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-teal" style="left:0%;right:0;width:100%">True-up Window 5/27</div>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">3&amp;1-Year Plan Materials Due</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-blue" style="left:14%"></div>
+                <span class="gantt-label-float" style="left:calc(14% + 12px)">6/2</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">FY27 Resource Baseline in PET</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-purple" style="left:0%;width:100%">PET Baseline 6/8–7/3</div>
+              </div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-purple" style="left:0%;width:100%"></div>
+              </div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-purple" style="left:0%;width:50%"></div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── LANE 3: Op Mechs & Meetings ── -->
+          <tr class="lane-header">
+            <td colspan="14">📅 BP PD Op Mechs & Meetings</td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">BP PD Leadership Sync</td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col today-col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+            <td class="col">
+              <div class="bar-wrap"><div class="gantt-dot d-blue" style="left:50%"></div></div>
+            </td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">3&amp;1-Yr Plan SVP+ Review</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-pink" style="left:28%;width:55%">SVP+ Review 5/28–29</div>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">July Board Meeting Prep</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-bar c-gray" style="left:0%;width:100%">Board Prep 6/11–12</div>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+
+          <!-- ── LANE 4+5: Artifacts & Announcements note row ── -->
+          <tr class="lane-header">
+            <td colspan="14">💰 Financial Planning</td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Financial Pass 2</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-green" style="left:28%"></div>
+                <span class="gantt-label-float" style="left:calc(28% + 12px)">5/26</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">FOR Materials Due</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-blue" style="left:14%"></div>
+                <span class="gantt-label-float" style="left:calc(14% + 12px)">6/2</span>
+              </div>
+            </td>
+            <td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">Financial Pass 3</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-yellow" style="left:50%"></div>
+                <span class="gantt-label-float" style="left:calc(50% + 12px)">7/13</span>
+              </div>
+            </td>
+            <td class="col"></td>
+          </tr>
+          <tr class="milestone-row">
+            <td class="label-cell">July Board Materials Due</td>
+            <td class="col"></td><td class="col"></td>
+            <td class="col today-col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td><td class="col"></td>
+            <td class="col">
+              <div class="bar-wrap">
+                <div class="gantt-dot d-red" style="left:50%"></div>
+                <span class="gantt-label-float" style="left:calc(50% + 12px)">7/13</span>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Admin Management Modal ── -->
+<div id="admin-modal" style="display:none;position:fixed;inset:0;background:rgba(10,20,50,0.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:10px;width:480px;max-height:85vh;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.25);display:flex;flex-direction:column">
+    <!-- Modal header -->
+    <div style="background:#1e2d6b;color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0">
+      <div>
+        <div style="font-size:14px;font-weight:700">⚙️ Manage Admins & Editors</div>
+        <div style="font-size:11px;color:#a0b0d0;margin-top:2px">People listed here can add/edit milestones and post announcements</div>
+      </div>
+      <button onclick="closeAdminModal()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <!-- Current admins list -->
+    <div style="padding:16px 18px;flex:1;overflow-y:auto">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#8896b0;margin-bottom:10px">Current Admins</div>
+      <div id="modal-admin-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px"></div>
+
+      <!-- Add new admin -->
+      <div style="background:#f8faff;border:1px solid #dde3f0;border-radius:8px;padding:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#8896b0;margin-bottom:8px">Add Admin / Editor</div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="flex:1">
+            <label style="font-size:10px;color:#6b7a99;font-weight:600;display:block;margin-bottom:4px">Name</label>
+            <input id="new-admin-name" type="text" placeholder="e.g. Jane Smith" style="width:100%;border:1px solid #dde3f0;border-radius:5px;padding:6px 10px;font-size:12px;color:#1a2340;outline:none" />
+          </div>
+          <div style="flex:1">
+            <label style="font-size:10px;color:#6b7a99;font-weight:600;display:block;margin-bottom:4px">Intuit Email</label>
+            <input id="new-admin-email" type="text" placeholder="jsmith@intuit.com" style="width:100%;border:1px solid #dde3f0;border-radius:5px;padding:6px 10px;font-size:12px;color:#1a2340;outline:none" />
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <div style="flex:1">
+            <label style="font-size:10px;color:#6b7a99;font-weight:600;display:block;margin-bottom:4px">Role label (optional)</label>
+            <input id="new-admin-role" type="text" placeholder="e.g. TPM Lead, PD Leader" style="width:100%;border:1px solid #dde3f0;border-radius:5px;padding:6px 10px;font-size:12px;color:#1a2340;outline:none" />
+          </div>
+          <button onclick="addAdmin()" style="background:#1e2d6b;color:white;border:none;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;margin-top:14px;white-space:nowrap">+ Add</button>
+        </div>
+        <div style="font-size:10px;color:#8896b0;margin-top:8px">⚠️ In production, email is used to match the logged-in Quickbase user. Only matched users see admin controls.</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:12px 18px;border-top:1px solid #eef0f8;display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="closeAdminModal()" style="border:1px solid #dde3f0;background:#f4f6fb;color:#4a5568;border-radius:6px;padding:7px 18px;font-size:12px;cursor:pointer">Cancel</button>
+      <button onclick="saveAdmins()" style="background:#1e2d6b;color:white;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e2d6b;color:white;padding:10px 22px;border-radius:8px;font-size:12px;font-weight:600;z-index:2000;box-shadow:0 4px 16px rgba(0,0,0,0.2)"></div>
+
+<script>
+  // ── Admin data ──
+  var admins = [
+    { name: "Judy Nannini",   email: "judy_nannini@intuit.com",   role: "VP BP PD" },
+    { name: "Eran Lador",     email: "eran_lador@intuit.com",     role: "PD Leader" },
+    { name: "Omar Elkabti",   email: "omar_elkabti@intuit.com",   role: "TPM Lead" },
+    { name: "Roberta Chen",   email: "roberta_chen@intuit.com",   role: "TPM Lead" },
+    { name: "Allison Bellah", email: "allison_bellah@intuit.com", role: "PD Leader" }
+  ];
+
+  function initials(name) {
+    return name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+  }
+
+  var avatarColors = ["#e67e22","#2563eb","#16a34a","#7c3aed","#0891b2","#db2777","#dc2626"];
+
+  function renderSidebar() {
+    var el = document.getElementById("admin-list");
+    el.innerHTML = admins.map(function(a, i) {
+      return '<div style="display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:5px;background:#f8faff;border:1px solid #eef0f8">' +
+        '<div style="width:22px;height:22px;border-radius:50%;background:' + avatarColors[i % avatarColors.length] + ';color:white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + initials(a.name) + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:11px;font-weight:600;color:#1a2340;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + a.name + '</div>' +
+          (a.role ? '<div style="font-size:10px;color:#8896b0">' + a.role + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderModalList() {
+    var el = document.getElementById("modal-admin-list");
+    el.innerHTML = admins.map(function(a, i) {
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:' + (i===2?'#f0f7ff':'#f8faff') + ';border:1px solid ' + (i===2?'#b0cdf8':'#eef0f8') + '">' +
+        '<div style="width:30px;height:30px;border-radius:50%;background:' + avatarColors[i % avatarColors.length] + ';color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + initials(a.name) + '</div>' +
+        '<div style="flex:1">' +
+          '<div style="font-size:12px;font-weight:600;color:#1a2340">' + a.name + (i===2?' <span style="background:#27ae60;color:white;font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;vertical-align:middle">YOU</span>':'') + '</div>' +
+          '<div style="font-size:10px;color:#6b7a99">' + a.email + (a.role ? ' · ' + a.role : '') + '</div>' +
+        '</div>' +
+        (i!==2 ? '<button onclick="removeAdmin('+i+')" style="background:#fff1f0;border:1px solid #fcc;color:#c0392b;border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;font-weight:600">Remove</button>' :
+                  '<span style="font-size:10px;color:#8896b0;font-style:italic">can\'t remove yourself</span>') +
+      '</div>';
+    }).join("");
+  }
+
+  function openAdminModal() {
+    renderModalList();
+    var m = document.getElementById("admin-modal");
+    m.style.display = "flex";
+    document.getElementById("new-admin-name").value = "";
+    document.getElementById("new-admin-email").value = "";
+    document.getElementById("new-admin-role").value = "";
+  }
+
+  function closeAdminModal() {
+    document.getElementById("admin-modal").style.display = "none";
+  }
+
+  function addAdmin() {
+    var name  = document.getElementById("new-admin-name").value.trim();
+    var email = document.getElementById("new-admin-email").value.trim();
+    var role  = document.getElementById("new-admin-role").value.trim();
+    if (!name || !email) { showToast("⚠️ Name and email are required"); return; }
+    if (!email.includes("@intuit.com")) { showToast("⚠️ Must be an @intuit.com address"); return; }
+    admins.push({ name: name, email: email, role: role });
+    document.getElementById("new-admin-name").value = "";
+    document.getElementById("new-admin-email").value = "";
+    document.getElementById("new-admin-role").value = "";
+    renderModalList();
+  }
+
+  function removeAdmin(i) {
+    admins.splice(i, 1);
+    renderModalList();
+  }
+
+  function saveAdmins() {
+    closeAdminModal();
+    renderSidebar();
+    showToast("✅ Admin list updated — saved to Quickbase");
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(function(){ t.style.display = "none"; }, 3000);
+  }
+
+  // Init
+  renderSidebar();
+</script>
+
+</body>
+</html>
