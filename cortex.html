@@ -39,7 +39,8 @@
   <!-- Tab nav -->
   <div class="tab-nav">
     <button type="button" class="tab-btn active" data-tab="gantt">📅 Timeline</button>
-    <button type="button" class="tab-btn" data-tab="status">✅ Planning Status</button>
+    <button type="button" class="tab-btn" data-tab="status">👔 PD Leaders</button>
+    <button type="button" class="tab-btn" data-tab="tpm">🔧 TPMs</button>
   </div>
 
   <div class="main" id="tab-gantt">
@@ -93,12 +94,12 @@
     </div>
   </div>
 
-  <!-- Planning Status tab -->
+  <!-- PD Leaders tab -->
   <div class="status-panel hidden" id="tab-status">
     <div class="status-header-bar">
       <div class="status-header-left">
-        <div class="status-title">FY27 Planning Status</div>
-        <div class="status-subtitle">Track deliverable submission by PD Leader · editable in Edit mode</div>
+        <div class="status-title">PD Leaders — FY27 Planning Deliverables</div>
+        <div class="status-subtitle">Kashi Kakarla's leadership team · editable in Edit mode</div>
       </div>
       <div class="status-header-right">
         <div class="status-legend">
@@ -111,6 +112,27 @@
     </div>
     <div class="status-grid-wrap">
       <div id="status-grid"></div>
+    </div>
+  </div>
+
+  <!-- TPM tab -->
+  <div class="status-panel hidden" id="tab-tpm">
+    <div class="status-header-bar">
+      <div class="status-header-left">
+        <div class="status-title">TPMs — Planning Activity Tracker</div>
+        <div class="status-subtitle">Allison Bellah's team · editable in Edit mode</div>
+      </div>
+      <div class="status-header-right">
+        <div class="status-legend">
+          <span class="legend-dot done"></span>Done
+          <span class="legend-dot at-risk"></span>At Risk
+          <span class="legend-dot pending-s"></span>Pending
+          <span class="legend-dot na"></span>N/A
+        </div>
+      </div>
+    </div>
+    <div class="status-grid-wrap">
+      <div id="tpm-grid"></div>
     </div>
   </div>
 

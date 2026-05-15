@@ -4,6 +4,7 @@
   var STORAGE_KEY = 'bpPdCortex.v1';
   var ADMIN_MODE_KEY = 'bpPdCortex.adminMode';
   var STATUS_KEY = 'bpPdCortex.planStatus.v1';
+  var TPM_STATUS_KEY = 'bpPdCortex.tpmStatus.v1';
 
   var LANE_ORDER = ['central', 'bpd', 'opmech', 'financial'];
   var LANE_LABELS = {
@@ -25,23 +26,49 @@
 
   var AVATAR_COLORS = ['#e67e22', '#2563eb', '#16a34a', '#7c3aed', '#0891b2', '#db2777', '#dc2626'];
 
-  // ── Planning Status configuration ──────────────────────────────────────────
+  // ── PD Leaders tab — Kashi Kakarla's direct reports (PD community, excl. EA)
+  // Source: Workday org lookup 2026-05-15
   var STATUS_LEADERS = [
-    { key: 'eran',     name: 'Eran Lador',       cap: 'Connectivity & Tax Engine' },
-    { key: 'allison',  name: 'Allison Bellah',    cap: 'Data & AI Platform' },
-    { key: 'ben',      name: 'Ben Rounsaville',   cap: 'Commerce & Payments' },
-    { key: 'priya',    name: 'Priya Ramanathan',  cap: 'Identity & Access' },
-    { key: 'wei',      name: 'Wei Chen',           cap: 'Developer Experience' },
-    { key: 'marcus',   name: 'Marcus Lee',         cap: 'Security & Compliance' }
+    { key: 'nandu',    name: 'Nandu Ramani',      title: 'VP, Core Jobs & Capabilities' },
+    { key: 'nhung',    name: 'Nhung Ho',           title: 'VP, AI Science' },
+    { key: 'sujay',    name: 'Sujay Sundaram',     title: 'Director, QB INTL & Growth' },
+    { key: 'apparna',  name: 'Apparna Ramadoss',   title: 'Director Development' },
+    { key: 'tarun',    name: 'Tarun Dhawan',        title: 'Director, Software Engineering' },
+    { key: 'varun',    name: 'Varun Gupta',         title: 'Manager 3, Software Engineering' },
+    { key: 'alpesh',   name: 'Alpesh Gaglani',      title: 'VP of Technology, Head of Architect' },
+    { key: 'allison',  name: 'Allison Bellah',      title: 'Director, TPM (SBG PD)' }
   ];
 
   var STATUS_DELIVERABLES = [
-    { key: 'dep-response',   label: 'Dependency Response',      due: '2026-05-26', lane: 'bpd' },
-    { key: 'resourcing',     label: 'Prelim Resourcing (PET)',   due: '2026-05-20', lane: 'bpd' },
-    { key: 'input-goals',    label: 'Input Goals (Pass 4)',      due: '2026-05-21', lane: 'central' },
-    { key: 'cto-materials',  label: 'Materials → CTO Cutline',  due: '2026-05-20', lane: 'bpd' },
-    { key: '3yr-plan',       label: '3&1-Year Plan Materials',   due: '2026-06-02', lane: 'bpd' },
-    { key: 'pet-baseline',   label: 'FY27 PET Baseline',         due: '2026-07-03', lane: 'bpd' }
+    { key: 'input-goals',    label: 'Input Goals (Pass 4)',      due: '2026-05-21' },
+    { key: 'cto-materials',  label: 'Materials → CTO Cutline',  due: '2026-05-20' },
+    { key: 'dep-response',   label: 'Dependency Response',      due: '2026-05-26' },
+    { key: 'resourcing',     label: 'Final Resourcing (PET)',    due: '2026-05-26' },
+    { key: '3yr-plan',       label: '3&1-Year Plan Materials',   due: '2026-06-02' },
+    { key: 'pet-baseline',   label: 'FY27 PET Baseline',         due: '2026-07-03' }
+  ];
+
+  // ── TPM tab — Allison Bellah's direct reports
+  // Source: Workday org lookup 2026-05-15
+  var TPM_MEMBERS = [
+    { key: 'allison',  name: 'Allison Bellah',       title: 'Director, TPM (SBG PD)' },
+    { key: 'eran',     name: 'Eran Lador',            title: 'Staff TPM – AWS FinOps' },
+    { key: 'geetha',   name: 'Geetha Kuppuswamy',     title: 'Manager 3, TPM' },
+    { key: 'janine',   name: 'Janine Buellesbach',    title: 'Senior Staff TPM' },
+    { key: 'judy',     name: 'Judy Nannini',           title: 'Staff TPM' },
+    { key: 'karen',    name: 'Karen Maciolek',         title: 'Manager 3, TPM' },
+    { key: 'minar',    name: 'Minar Karia',            title: 'Manager 3, TPM' },
+    { key: 'omar',     name: 'Omar Elkabti',           title: 'Principal TPM' }
+  ];
+
+  var TPM_ACTIVITIES = [
+    { key: 'dep-dashboard',  label: 'Dep Dashboard Updated',    due: '2026-05-20' },
+    { key: 'pet-resourcing', label: 'PET Resourcing Confirmed',  due: '2026-05-20' },
+    { key: 'cto-packet',     label: 'CTO Packet Assembled',      due: '2026-05-20' },
+    { key: 'dep-responses',  label: 'Dep Responses Collected',  due: '2026-05-26' },
+    { key: 'roadmap-trueup', label: 'Roadmap True-up Complete',  due: '2026-05-27' },
+    { key: '3yr-materials',  label: '3&1-Yr Materials Drafted',  due: '2026-06-02' },
+    { key: 'pet-baseline',   label: 'PET Baseline Locked',       due: '2026-07-03' }
   ];
 
   // Key deadlines shown in the countdown strip
@@ -88,7 +115,8 @@
     links: {}, admins: [], announcements: [], milestones: [],
     scale: 'week', laneFilter: 'all', adminMode: false, seedVersion: 1,
     activeTab: 'gantt',
-    planStatus: {}   // { 'eran|dep-response': { status: 'done', note: '' }, ... }
+    planStatus: {},   // { 'nandu|input-goals': { status: 'done', note: '' }, ... }
+    tpmStatus: {}     // { 'omar|dep-dashboard': { status: 'done', note: '' }, ... }
   };
 
   var adminModalDraft = null;
@@ -210,14 +238,26 @@
       var raw = localStorage.getItem(STATUS_KEY);
       if (raw) state.planStatus = JSON.parse(raw) || {};
     } catch (e) { state.planStatus = {}; }
+    try {
+      var raw2 = localStorage.getItem(TPM_STATUS_KEY);
+      if (raw2) state.tpmStatus = JSON.parse(raw2) || {};
+    } catch (e) { state.tpmStatus = {}; }
   }
 
   function savePlanStatus() {
     localStorage.setItem(STATUS_KEY, JSON.stringify(state.planStatus));
   }
 
+  function saveTpmStatus() {
+    localStorage.setItem(TPM_STATUS_KEY, JSON.stringify(state.tpmStatus));
+  }
+
   function getCellStatus(leaderKey, deliverableKey) {
     return state.planStatus[statusKey(leaderKey, deliverableKey)] || { status: 'pending', note: '' };
+  }
+
+  function getTpmCellStatus(memberKey, activityKey) {
+    return state.tpmStatus[statusKey(memberKey, activityKey)] || { status: 'pending', note: '' };
   }
 
   function renderStatusGrid() {
@@ -261,7 +301,7 @@
       html += '<tr>';
       html += '<td class="sg-leader-cell">' +
         '<div class="sg-leader-name">' + escapeHtml(leader.name) + '</div>' +
-        '<div class="sg-leader-cap">' + escapeHtml(leader.cap) + '</div>' +
+        '<div class="sg-leader-cap">' + escapeHtml(leader.title) + '</div>' +
         '</td>';
 
       STATUS_DELIVERABLES.forEach(function (del) {
@@ -286,7 +326,75 @@
     if (state.adminMode) {
       grid.querySelectorAll('.sg-cell-editable').forEach(function (td) {
         td.addEventListener('click', function () {
-          openCellModal(td.getAttribute('data-leader'), td.getAttribute('data-del'));
+          openCellModal(td.getAttribute('data-leader'), td.getAttribute('data-del'), 'pd');
+        });
+      });
+    }
+  }
+
+  function renderTpmGrid() {
+    var grid = $('tpm-grid');
+    if (!grid) return;
+
+    var totalCells = TPM_MEMBERS.length * TPM_ACTIVITIES.length;
+    var doneCells = 0, atRiskCells = 0;
+    TPM_MEMBERS.forEach(function (m) {
+      TPM_ACTIVITIES.forEach(function (a) {
+        var c = getTpmCellStatus(m.key, a.key);
+        if (c.status === 'done') doneCells++;
+        if (c.status === 'at-risk') atRiskCells++;
+      });
+    });
+    var pct = Math.round((doneCells / totalCells) * 100);
+
+    var html = '<div class="sg-summary">' +
+      '<div class="sg-progress-wrap">' +
+      '<div class="sg-progress-bar"><div class="sg-progress-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="sg-progress-label">' + doneCells + ' / ' + totalCells + ' activities complete (' + pct + '%)</span>' +
+      '</div>' +
+      (atRiskCells > 0 ? '<div class="sg-risk-flag">⚠ ' + atRiskCells + ' at risk</div>' : '') +
+      '</div>';
+
+    html += '<div class="sg-table-wrap"><table class="sg-table">';
+    html += '<thead><tr><th class="sg-leader-th">TPM</th>';
+    TPM_ACTIVITIES.forEach(function (a) {
+      var days = daysUntil(a.due);
+      var dueClass = days !== null && days >= 0 && days <= 5 ? ' sg-due-soon' : '';
+      html += '<th class="sg-del-th' + dueClass + '">' +
+        escapeHtml(a.label) +
+        '<div class="sg-due">Due ' + escapeHtml(a.due.slice(5).replace('-', '/')) + '</div>' +
+        '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    TPM_MEMBERS.forEach(function (member) {
+      html += '<tr>';
+      html += '<td class="sg-leader-cell">' +
+        '<div class="sg-leader-name">' + escapeHtml(member.name) + '</div>' +
+        '<div class="sg-leader-cap">' + escapeHtml(member.title) + '</div>' +
+        '</td>';
+      TPM_ACTIVITIES.forEach(function (act) {
+        var cell = getTpmCellStatus(member.key, act.key);
+        var s = cell.status || 'pending';
+        var editable = state.adminMode ? ' sg-cell-editable' : '';
+        html += '<td class="sg-cell sg-s-' + s + editable + '"' +
+          ' data-member="' + escapeHtml(member.key) + '"' +
+          ' data-act="' + escapeHtml(act.key) + '"' +
+          ' title="' + escapeHtml(cell.note || '') + '">' +
+          statusIcon(s) +
+          (cell.note ? '<span class="sg-cell-note">…</span>' : '') +
+          '</td>';
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    grid.innerHTML = html;
+
+    if (state.adminMode) {
+      grid.querySelectorAll('.sg-cell-editable').forEach(function (td) {
+        td.addEventListener('click', function () {
+          openCellModal(td.getAttribute('data-member'), td.getAttribute('data-act'), 'tpm');
         });
       });
     }
@@ -299,13 +407,18 @@
     return '<span class="sg-icon sg-pending">·</span>';
   }
 
-  function openCellModal(leaderKey, delKey) {
-    cellEditTarget = { leaderKey: leaderKey, delKey: delKey };
-    var leader = STATUS_LEADERS.find(function (l) { return l.key === leaderKey; });
-    var del = STATUS_DELIVERABLES.find(function (d) { return d.key === delKey; });
-    $('cell-modal-title').textContent = (leader ? leader.name : leaderKey);
-    $('cell-modal-subtitle').textContent = del ? del.label + ' · due ' + del.due.slice(5).replace('-', '/') : '';
-    var cell = getCellStatus(leaderKey, delKey);
+  function openCellModal(rowKey, colKey, gridType) {
+    cellEditTarget = { rowKey: rowKey, colKey: colKey, gridType: gridType || 'pd' };
+    var isPd = cellEditTarget.gridType === 'pd';
+    var person = isPd
+      ? STATUS_LEADERS.find(function (l) { return l.key === rowKey; })
+      : TPM_MEMBERS.find(function (m) { return m.key === rowKey; });
+    var col = isPd
+      ? STATUS_DELIVERABLES.find(function (d) { return d.key === colKey; })
+      : TPM_ACTIVITIES.find(function (a) { return a.key === colKey; });
+    $('cell-modal-title').textContent = person ? person.name : rowKey;
+    $('cell-modal-subtitle').textContent = col ? col.label + ' · due ' + col.due.slice(5).replace('-', '/') : '';
+    var cell = isPd ? getCellStatus(rowKey, colKey) : getTpmCellStatus(rowKey, colKey);
     document.querySelectorAll('input[name="cell-status"]').forEach(function (r) {
       r.checked = r.value === (cell.status || 'pending');
     });
@@ -317,11 +430,18 @@
     if (!cellEditTarget) return;
     var chosen = document.querySelector('input[name="cell-status"]:checked');
     if (!chosen) return;
-    var k = statusKey(cellEditTarget.leaderKey, cellEditTarget.delKey);
-    state.planStatus[k] = { status: chosen.value, note: $('cell-note').value.trim() };
-    savePlanStatus();
-    closeModal('cell-modal');
-    renderStatusGrid();
+    var k = statusKey(cellEditTarget.rowKey, cellEditTarget.colKey);
+    if (cellEditTarget.gridType === 'tpm') {
+      state.tpmStatus[k] = { status: chosen.value, note: $('cell-note').value.trim() };
+      saveTpmStatus();
+      closeModal('cell-modal');
+      renderTpmGrid();
+    } else {
+      state.planStatus[k] = { status: chosen.value, note: $('cell-note').value.trim() };
+      savePlanStatus();
+      closeModal('cell-modal');
+      renderStatusGrid();
+    }
     showToast('Status updated.');
   }
 
@@ -333,7 +453,9 @@
     });
     $('tab-gantt').classList.toggle('hidden', tab !== 'gantt');
     $('tab-status').classList.toggle('hidden', tab !== 'status');
+    $('tab-tpm').classList.toggle('hidden', tab !== 'tpm');
     if (tab === 'status') renderStatusGrid();
+    if (tab === 'tpm') renderTpmGrid();
   }
 
   // ── Timeline ────────────────────────────────────────────────────────────────
