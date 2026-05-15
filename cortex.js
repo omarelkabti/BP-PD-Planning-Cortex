@@ -95,8 +95,8 @@
     viewer: { displayName: 'Guest' },
     links: { sbgPlanningCortex: 'https://intuitcorp.quickbase.com/db/bvmumchzn?a=dbpage&pagename=planning-navigator.html' },
     admins: [
-      { name: 'Judy Nannini', email: 'judy_nannini@intuit.com', role: 'VP BP PD' },
-      { name: 'Omar Elkabti', email: 'omar_elkabti@intuit.com', role: 'TPM Lead' }
+      { name: 'Judy Nannini', email: 'judy_nannini@intuit.com', role: 'Staff Technical Program Manager' },
+      { name: 'Omar Elkabti', email: 'omar_elkabti@intuit.com', role: 'Principal Technical Program Manager' }
     ],
     announcements: [{
       id: 'ann-fallback-1',
