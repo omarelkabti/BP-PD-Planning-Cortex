@@ -1,6 +1,6 @@
 {
   "viewer": { "displayName": "Omar" },
-  "backendUrl": "",
+  "backendUrl": "https://script.google.com/a/macros/intuit.com/s/AKfycbzFBEP8BfmB8O8kgHluLXs1HdtPyoefwfKIlNmOzsJxd8LUHswCCn5DgJ428gkDLPo-/exec",
   "links": {
     "dependencyDashboard": "",
     "workstreamReconciliation": "",
@@ -13,11 +13,11 @@
     "smartsheetBpPd": ""
   },
   "admins": [
-    { "name": "Allison Bellah", "email": "allison_bellah@intuit.com", "role": "Director, TPM (SBG PD)" },
-    { "name": "Judy Nannini", "email": "judy_nannini@intuit.com", "role": "Staff TPM" },
-    { "name": "Karen Maciolek", "email": "karen_maciolek@intuit.com", "role": "Manager 3, TPM" },
-    { "name": "Minar Karia", "email": "minar_karia@intuit.com", "role": "Manager 3, TPM" },
-    { "name": "Omar Elkabti", "email": "omar_elkabti@intuit.com", "role": "Principal TPM" }
+    { "name": "Allison Bellah", "email": "allison_bellah@intuit.com", "role": "Director, Technical Program Management (SBG PD)" },
+    { "name": "Judy Nannini", "email": "judy_nannini@intuit.com", "role": "Staff Technical Program Manager" },
+    { "name": "Karen Maciolek", "email": "karen_maciolek@intuit.com", "role": "Manager 3, Technical Program Management" },
+    { "name": "Minar Karia", "email": "minar_karia@intuit.com", "role": "Manager 3, Technical Program Management" },
+    { "name": "Omar Elkabti", "email": "omar_elkabti@intuit.com", "role": "Principal Technical Program Manager" }
   ],
   "announcements": [
     {
