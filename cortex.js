@@ -522,12 +522,7 @@
     function row(d) {
       var url = (state.links && state.links[d.id]) || '';
       var isConfigured = /^https?:\/\//i.test(url);
-      return (
-        '<button type="button" class="artifact-link" data-link-id="' +
-        escapeHtml(d.id) +
-        '" data-url="' +
-        escapeHtml(url) +
-        '">' +
+      var inner =
         '<span class="icon">' +
         d.icon +
         '</span>' +
@@ -536,21 +531,31 @@
         '<div class="sublabel">' +
         escapeHtml(d.sub) +
         (isConfigured ? '' : ' · URL not set') +
-        '</div></div></div></button>'
+        '</div></div></div>';
+      if (isConfigured) {
+        return (
+          '<a class="artifact-link" href="' +
+          escapeHtml(url) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          inner +
+          '</a>'
+        );
+      }
+      return (
+        '<button type="button" class="artifact-link" data-link-miss="' +
+        escapeHtml(d.id) +
+        '">' +
+        inner +
+        '</button>'
       );
     }
 
     $('sidebar-artifacts').innerHTML = defs.filter(function (d) { return d.group === 'artifacts'; }).map(row).join('');
     $('sidebar-quicklinks').innerHTML = defs.filter(function (d) { return d.group === 'quick'; }).map(row).join('');
 
-    document.querySelectorAll('.artifact-link[data-link-id]').forEach(function (btn) {
+    document.querySelectorAll('button.artifact-link[data-link-miss]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var url = btn.getAttribute('data-url') || '';
-        if (!/^https?:\/\//i.test(url)) {
-          showToast('URL not configured — edit data/seed.json or local data after export.');
-          return;
-        }
-        window.open(url, '_blank', 'noopener,noreferrer');
+        showToast('URL not configured — edit data/seed.json or clear localStorage and reload.');
       });
     });
   }

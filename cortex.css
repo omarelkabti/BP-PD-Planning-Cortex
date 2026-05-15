@@ -163,6 +163,11 @@ button.artifact-link {
   font-family: inherit;
 }
 
+a.artifact-link {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 a.artifact-link:hover { background: #e8f0ff; border-color: #b0c0e8; }
 button.artifact-link:hover { background: #e8f0ff; border-color: #b0c0e8; }
 

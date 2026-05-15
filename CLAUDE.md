@@ -5,16 +5,18 @@
 A static **GitHub Pages** hub for the Business Platform PD team: Gantt-style milestones, announcements, artifact links, and local edit mode. Bookmarkable by PD leaders, managers, and TPMs.
 
 ### GitHub Pages deployment
-- **Source:** `main` branch, **site root** (this repo root contains [`index.html`](index.html)).
+- **Source:** `main` branch, **site root** (this repo root). [`index.html`](index.html) redirects immediately to **[`cortex.html`](cortex.html)** (the app shell so paths match the planned file names). GitHub Pages still serves `index.html` by default at the site root.
 - **Enable Pages:** Repository **Settings → Pages → Build and deployment →** set source to **Deploy from a branch**, branch `main`, folder **/** (root).
-- **Live URL:** `https://<org-or-user>.github.io/<repo>/` (GitHub shows the exact URL after the first publish).
-- **Local preview:** From the repo root run `python3 -m http.server 8080` and open `http://localhost:8080/` so `fetch('data/seed.json')` and `localStorage` behave like production (`file://` may block fetch; the app falls back to a tiny embedded seed).
+- **Live URL:** `https://<org-or-user>.github.io/<repo>/` (exact URL appears in Settings after the first publish). You may bookmark `.../cortex.html` directly.
+- **Private repositories:** GitHub Pages on private repos may require a paid GitHub feature or org policy; use a public repo or confirm your org allows Pages on private repos.
+- **Local preview:** From the repo root run `python3 -m http.server 8080` and open `http://localhost:8080/cortex.html` (or `/` which redirects). `fetch('data/seed.json')` and `localStorage` behave reliably over `http://`; `file://` may block fetch (the app falls back to a tiny embedded seed).
 
 ### File structure
 
 | File | Purpose |
 |------|---------|
-| [`index.html`](index.html) | Page shell — top bar, layout, modals |
+| [`index.html`](index.html) | GitHub Pages default entry — redirects to `cortex.html` |
+| [`cortex.html`](cortex.html) | Main page — top bar, layout, modals |
 | [`cortex.js`](cortex.js) | State, Gantt rendering, filters, modals, CSV, persistence |
 | [`cortex.css`](cortex.css) | Styles |
 | [`data/seed.json`](data/seed.json) | Default admins, announcements, milestones, sidebar URLs |
