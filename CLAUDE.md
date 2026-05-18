@@ -4,8 +4,9 @@
 Static GitHub Pages app for the Business Platform PD planning cycle. Gantt timeline + planning status tracker. No build step — edit the files, commit, push, done.
 
 - **Repo:** https://github.com/omarelkabti/BP-PD-Planning-Cortex
-- **Live site:** https://omarelkabti.github.io/BP-PD-Planning-Cortex/cortex.html
-- **Local preview:** `python3 -m http.server 8181` from repo root, then open http://localhost:8181/cortex.html
+- **Live site:** https://omarelkabti.github.io/BP-PD-Planning-Cortex/ (or `/cortex.html` — same app)
+- **Local preview:** `python3 -m http.server 8181` from repo root, then open http://localhost:8181/ (do not open the HTML file directly from Finder — `fetch` needs http)
+- **First deploy:** Push to `main` — the `.github/workflows/pages.yml` workflow publishes the site. In **Settings → Pages**, set source to **GitHub Actions** if it is not already.
 
 ---
 

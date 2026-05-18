@@ -1192,6 +1192,7 @@
       mergeSeedIntoState(seed);
       saveLocal();
     }
+    if (seed.backendUrl) state.backendUrl = seed.backendUrl;
 
     $('btn-admin-mode').textContent = state.adminMode ? 'Edit mode: On' : 'Edit mode: Off';
     wireEvents();
@@ -1199,5 +1200,14 @@
     loadFromBackend(); // pull latest Sheet data; merges over localStorage silently
   }
 
-  init();
+  init().catch(function (err) {
+    console.error('BP PD Planning Cortex failed to start:', err);
+    var banner = document.createElement('div');
+    banner.setAttribute('role', 'alert');
+    banner.style.cssText =
+      'position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:#fff;padding:12px 20px;font:13px system-ui,sans-serif';
+    banner.textContent =
+      'Planning Cortex failed to load. Try a hard refresh (Cmd+Shift+R). If you opened a saved HTML file, run: python3 -m http.server 8181 from the repo folder.';
+    document.body.prepend(banner);
+  });
 })();
